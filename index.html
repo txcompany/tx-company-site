@@ -267,7 +267,7 @@ footer{padding:24px 0;border-top:1px solid var(--line);color:#727b91;font-size:1
 <div class="proof-gallery-title">Feedbacks reais recebidos de clientes</div>
 <style id="tx-carousel-v24">
 .tx-feedback-carousel{overflow:hidden;position:relative;width:100%;padding:16px 0 24px;mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent)}
-.tx-carousel-track{display:flex;gap:14px;width:max-content;animation:txFeedbackSlide 33s linear infinite;align-items:stretch}
+.tx-carousel-track{transform:translate3d(0,0,0);display:flex;gap:14px;width:max-content;animation:txFeedbackSlide 33s linear infinite;align-items:stretch}
 .tx-carousel-card{margin:0;flex:0 0 clamp(230px,28vw,330px);height:clamp(280px,36vw,380px);border:1px solid rgba(166,139,250,.42);border-radius:18px;padding:9px;background:#101120;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .tx-carousel-card img{width:100%;height:100%;object-fit:contain;display:block;border-radius:9px}
 .tx-feedback-carousel.is-paused .tx-carousel-track{animation-play-state:paused!important}
@@ -306,4 +306,19 @@ footer{padding:24px 0;border-top:1px solid var(--line);color:#727b91;font-size:1
 <script>
 function move(dir){const t=document.getElementById('track'); const c=t.querySelector('.project'); t.scrollBy({left:dir*(c.offsetWidth+18),behavior:'smooth'})}
 </script>
-<script id="tx-carousel-controls-v25">(function(){var c=document.querySelector('.tx-feedback-carousel');if(!c)return;var h=document.getElementById('tx-carousel-hint');function toggle(){var paused=c.classList.toggle('is-paused');c.setAttribute('aria-pressed',String(paused));if(h)h.textContent=paused?'Pausado. Toque novamente para continuar':'Toque nos feedbacks para pausar e ler'}c.addEventListener('click',toggle);c.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}})})();</script></body></html>
+<script id="tx-carousel-controls-v25">(function(){var c=document.querySelector('.tx-feedback-carousel');if(!c)return;var h=document.getElementById('tx-carousel-hint');function toggle(){var paused=c.classList.toggle('is-paused');c.setAttribute('aria-pressed',String(paused));if(h)h.textContent=paused?'Pausado. Toque novamente para continuar':'Toque nos feedbacks para pausar e ler'}c.addEventListener('click',toggle);c.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}})})();</script><script id="tx-carousel-infinite-v27">(function(){
+var c=document.querySelector('.tx-feedback-carousel'), t=c&&c.querySelector('.tx-carousel-track');
+if(!t)return;
+var cards=Array.from(t.querySelectorAll('.tx-carousel-card'));
+if(cards.length<2)return;
+// A segunda metade é uma cópia exata da primeira: medir a distância real.
+var half=Math.floor(cards.length/2), x=0, last=0, distance=0;
+function measure(){var a=cards[0].getBoundingClientRect(), b=cards[half].getBoundingClientRect();distance=b.left-a.left;if(distance>0)x=x%distance;}
+function frame(now){if(!last)last=now;var dt=Math.min(now-last,80);last=now;
+if(!c.classList.contains('is-paused')&&distance>0){x=(x+dt*0.037)%distance;t.style.transform='translate3d('+(-x)+'px,0,0)';}
+requestAnimationFrame(frame);}
+t.style.animation='none';t.style.willChange='transform';
+measure();window.addEventListener('resize',measure,{passive:true});
+if('ResizeObserver' in window){new ResizeObserver(measure).observe(c);}
+requestAnimationFrame(frame);
+})();</script></body></html>
