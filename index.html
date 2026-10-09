@@ -306,19 +306,19 @@ footer{padding:24px 0;border-top:1px solid var(--line);color:#727b91;font-size:1
 <script>
 function move(dir){const t=document.getElementById('track'); const c=t.querySelector('.project'); t.scrollBy({left:dir*(c.offsetWidth+18),behavior:'smooth'})}
 </script>
-<script id="tx-carousel-controls-v25">(function(){var c=document.querySelector('.tx-feedback-carousel');if(!c)return;var h=document.getElementById('tx-carousel-hint');function toggle(){var paused=c.classList.toggle('is-paused');c.setAttribute('aria-pressed',String(paused));if(h)h.textContent=paused?'Pausado. Toque novamente para continuar':'Toque nos feedbacks para pausar e ler'}c.addEventListener('click',toggle);c.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}})})();</script><script id="tx-carousel-infinite-v27">(function(){
-var c=document.querySelector('.tx-feedback-carousel'), t=c&&c.querySelector('.tx-carousel-track');
-if(!t)return;
-var cards=Array.from(t.querySelectorAll('.tx-carousel-card'));
-if(cards.length<2)return;
-// A segunda metade é uma cópia exata da primeira: medir a distância real.
-var half=Math.floor(cards.length/2), x=0, last=0, distance=0;
-function measure(){var a=cards[0].getBoundingClientRect(), b=cards[half].getBoundingClientRect();distance=b.left-a.left;if(distance>0)x=x%distance;}
-function frame(now){if(!last)last=now;var dt=Math.min(now-last,80);last=now;
-if(!c.classList.contains('is-paused')&&distance>0){x=(x+dt*0.037)%distance;t.style.transform='translate3d('+(-x)+'px,0,0)';}
-requestAnimationFrame(frame);}
-t.style.animation='none';t.style.willChange='transform';
+<script id="tx-carousel-controls-v25">(function(){var c=document.querySelector('.tx-feedback-carousel');if(!c)return;var h=document.getElementById('tx-carousel-hint');function toggle(){var paused=c.classList.toggle('is-paused');c.setAttribute('aria-pressed',String(paused));if(h)h.textContent=paused?'Pausado. Toque novamente para continuar':'Toque nos feedbacks para pausar e ler'}c.addEventListener('click',toggle);c.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}})})();</script><script id="tx-carousel-infinite-v28">(function(){
+const c=document.querySelector('.tx-feedback-carousel');
+const t=c&&c.querySelector('.tx-carousel-track');if(!t)return;
+const originals=Array.from(t.querySelectorAll('.tx-carousel-card'));if(!originals.length)return;
+// Duplicate the entire sequence to ensure there is always another image immediately after the last.
+originals.forEach(card=>{const copy=card.cloneNode(true);copy.setAttribute('aria-hidden','true');t.appendChild(copy)});
+let distance=0,position=0,last=0;
+function measure(){const a=originals[0].getBoundingClientRect();const b=t.children[originals.length].getBoundingClientRect();const d=b.left-a.left;if(d>0){distance=d;position=((position%d)+d)%d;}}
+function tick(now){if(!last)last=now;const elapsed=Math.min(now-last,80);last=now;
+if(!c.classList.contains('is-paused')&&distance>0){position=(position+elapsed*0.037)%distance;}
+t.style.transform='translate3d('+(-position)+'px,0,0)';requestAnimationFrame(tick);}
+t.style.setProperty('animation','none','important');t.style.willChange='transform';
 measure();window.addEventListener('resize',measure,{passive:true});
-if('ResizeObserver' in window){new ResizeObserver(measure).observe(c);}
-requestAnimationFrame(frame);
+if('ResizeObserver' in window)new ResizeObserver(measure).observe(c);
+requestAnimationFrame(tick);
 })();</script></body></html>
