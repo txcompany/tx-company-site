@@ -1,0 +1,4 @@
+FEEDBACK CORRIGIDO V2
+Imagem com telefone oculto incorporada diretamente no index.html.
+Substituidas 2 ocorrencias (original e duplicata do carrossel).
+Apos subir o index.html no GitHub, aguarde o deploy de tx-company-site no Render e atualize a pagina sem cache.
